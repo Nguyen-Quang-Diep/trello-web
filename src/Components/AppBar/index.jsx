@@ -15,6 +15,9 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import Tooltip from '@mui/material/Tooltip'
 import InfoIcon from '@mui/icons-material/Info'
 import Profile from './Menus/Profile'
+import AddCircleIcon from '@mui/icons-material/AddCircle'
+
+
 function AppBar() {
   return (
     <Box px={2} sx={{
@@ -37,7 +40,7 @@ function AppBar() {
           <Recent/>
           <Started/>
           <Templates/>
-          <Button variant="contained">Create</Button>
+          <Button variant="contained" startIcon={<AddCircleIcon/>}>Create</Button>
         </Box>
       </Box>
 
