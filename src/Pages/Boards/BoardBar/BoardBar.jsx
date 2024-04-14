@@ -36,8 +36,10 @@ function Boardbar() {
       gap: 2,
       overflowX: 'auto',
       bgcolor: (theme) => ( theme.palette.mode === 'dark' ? '#34495e' : '#1976d2' ),
-      borderBottom: '1px solid #eef2f1'
-
+      borderBottom: '1px solid #eef2f1',
+      '&::-webkit-scrollbar-track': {
+        m: 2
+      }
     }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
@@ -101,7 +103,12 @@ function Boardbar() {
               width: 34,
               height: 34,
               fontSize: 16,
-              border: 'none'
+              border: 'none',
+              color: 'white',
+              cursor: 'pointer',
+              '&:first-of-type': {
+                bgcolor: '#a4d0be'
+              }
             }
           }}>
           <Tooltip title='nguyenquangdiep'>
