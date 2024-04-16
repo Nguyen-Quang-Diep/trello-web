@@ -10,22 +10,22 @@ import AvatarGroup from '@mui/material/AvatarGroup'
 import Tooltip from '@mui/material/Tooltip'
 import Button from '@mui/material/Button'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
+import { capitalizeFirstLetter } from '~/utils/formatters'
 
-
-function Boardbar() {
-  const MENU_STYLES = {
-    color: 'white',
-    bgcolor: 'transparent',
-    border: 'none',
-    paddingX: '5px',
-    borderRadius: '4px',
-    '& .MuiSvgIcon-root' :{
-      color: 'white'
-    },
-    '&:hover': {
-      bgcolor: 'primary.50'
-    }
+const MENU_STYLES = {
+  color: 'white',
+  bgcolor: 'transparent',
+  border: 'none',
+  paddingX: '5px',
+  borderRadius: '4px',
+  '& .MuiSvgIcon-root' :{
+    color: 'white'
+  },
+  '&:hover': {
+    bgcolor: 'primary.50'
   }
+}
+function Boardbar({ board }) {
   return (
     <Box px={2} sx={{
       width: '100%',
@@ -46,7 +46,7 @@ function Boardbar() {
           <Chip
             sx={MENU_STYLES}
             icon={<DashboardIcon />}
-            label="Dashboard"
+            label={capitalizeFirstLetter(board?.title)}
             onClick
           />
         </Box>
@@ -54,7 +54,7 @@ function Boardbar() {
           <Chip
             sx={MENU_STYLES}
             icon={<AddToDriveIcon />}
-            label="Add to Google Driver"
+            label={capitalizeFirstLetter(board?.type)}
             onClick
           />
         </Box>
