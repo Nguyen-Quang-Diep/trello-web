@@ -18,23 +18,44 @@ import AddCardIcon from '@mui/icons-material/AddCard'
 import DragHandleIcon from '@mui/icons-material/DragHandle'
 import ListCards from './ListCards/ListCards'
 import { mapOrder } from '~/utils/sorts'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 function Columns({ column }) {
+  const {
+    attributes, listeners, setNodeRef, transform, transition } = useSortable({
+    id: column._id,
+    data: { ...column }
+  })
+
+  const dndKitColumnStyles = {
+    // touchAction: 'none', // danh cho sensors dang pointer
+    //https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbEZ5TTVnSV9lVjFPdUxvVlpoMGQ5b2wwZDdmd3xBQ3Jtc0tsMmdUc2t5OEdTVTNLeXhPcWNzR2FITTFYa3Ytb1ZrUmZCbHMxclExUkViaHRwankyNDV4ZnhmaW93RUV6YVNqeFRnM3VaYXlGb2t0SDZVU1hfTHdNRG9EbGE4UG1vV21RX1FOd1RONl9KRG1zV0gwaw&q=https%3A%2F%2Fgithub.com%2Fclauderic%2Fdnd-kit%2Fissues%2F117&v=IttteelPx-k
+    transform: CSS.Translate.toString(transform),
+    transition
+  }
+
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => { setAnchorEl(event.currentTarget) }
   const handleClose = () => { setAnchorEl(null) }
+
   const orderedCard = mapOrder(column?.cards, column?.cardOrderIds, '_id')
   return (
-    <Box sx={{
-      minWidth: '300px',
-      maxWidth: '300px',
-      bgcolor: (theme) => ( theme.palette.mode === 'dark' ? '#333643' : '#ebecf0' ),
-      ml: 2,
-      borderRadius: '6px',
-      height: 'fit-content',
-      maxHeight: (theme) => `calc(${theme.trello.boardContentHeight} - ${theme.spacing(5)})`
-    }}>
+    <Box
+      ref={setNodeRef}
+      style={dndKitColumnStyles}
+      {...attributes}
+      {...listeners}
+      sx={{
+        minWidth: '300px',
+        maxWidth: '300px',
+        bgcolor: (theme) => ( theme.palette.mode === 'dark' ? '#333643' : '#ebecf0' ),
+        ml: 2,
+        borderRadius: '6px',
+        height: 'fit-content',
+        maxHeight: (theme) => `calc(${theme.trello.boardContentHeight} - ${theme.spacing(5)})`
+      }}>
       {/**Box Column Header */}
       <Box sx={{
         height: (theme) => (theme.trello.columnHeaderHeight),
