@@ -1,9 +1,17 @@
 import Box from '@mui/material/Box'
 import ListColumns from './ListColumns/ListColumns'
 import { mapOrder } from '~/utils/sorts'
-import { DndContext, PointerSensor, useSensor, useSensors, MouseSensor, TouchSensor } from '@dnd-kit/core'
+import { DndContext, PointerSensor, useSensor, useSensors, MouseSensor, TouchSensor, DragOverlay, defaultDropAnimationSideEffects } from '@dnd-kit/core'
 import { useEffect, useState } from 'react'
 import { arrayMove } from '@dnd-kit/sortable'
+import Columns from './ListColumns/Column/Columns'
+import Card from './ListColumns/Column/ListCards/Card/Card'
+
+
+const ACITVE_DRAG_ITEM_TYPE = {
+  COLUMN: 'ACITVE_DRAG_ITEM_TYPE_COLUMN',
+  CARD: 'ACITVE_DRAG_ITEM_TYPE_CARD'
+}
 function BoardContent({ board }) {
   // https://docs.dndkit.com/api-documentation/sensors
   // neu su dung PointerSensors mac dinh thi phai ket hop thuoc tinh CSS touch-action: none o nhung phan tu keo tha
@@ -21,11 +29,23 @@ function BoardContent({ board }) {
   const sensors = useSensors(mouseSensor, touchSensor)
 
   const [oderedColumnsState, setOderedColumnsState] = useState([])
+  // cung mot thoi diem chi keo duoc 1 thu (column or card)
+  const [activeDragItemId, setActiveDragItemId] = useState(null)
+  const [activeDragItemType, setActiveDragItemType] = useState(null)
+  const [activeDragItemData, setActiveDragItemData] = useState(null)
 
   useEffect(() => {
     const orderedColumn = mapOrder(board?.columns, board?.columnOrderIds, '_id')
     setOderedColumnsState(orderedColumn)
   }, [board])
+  //Trigger khi bat dau keo
+  const handleDragStart = (event) => {
+    console.log('handleDragStart: ', event)
+    setActiveDragItemId(event?.active?.id)
+    setActiveDragItemType(event?.active?.data?.current?.columnId ? ACITVE_DRAG_ITEM_TYPE.CARD : ACITVE_DRAG_ITEM_TYPE.COLUMN)
+    setActiveDragItemData(event?.active?.data?.current)
+  }
+
   const handleDragEnd = (event) => {
     const { active, over } = event
     // console.log('handleDragEnd :', event)
@@ -52,9 +72,20 @@ function BoardContent({ board }) {
       setOderedColumnsState(dndOrderedColumns)
     }
 
+
   }
+
+  /**
+     * Animation khi tha (drop) phan tu - test bang cach keo xong tha truc tiep 
+     * va nhin phan giu cho overlay
+     */
+  const customDropAnimation = { sideEffects: defaultDropAnimationSideEffects({ styles: { active: { opacity: '0.5' } } }) }
   return (
-    <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
+    <DndContext
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
       <Box sx={{
         width: '100%',
         height: (theme) => theme.trello.boardContentHeight,
@@ -62,6 +93,11 @@ function BoardContent({ board }) {
         p: '10px 0'
       }}>
         <ListColumns columns={oderedColumnsState}/>
+        <DragOverlay dropAnimation={customDropAnimation}>
+          {!activeDragItemType && null}
+          {(activeDragItemType === ACITVE_DRAG_ITEM_TYPE.COLUMN) && <Columns column={activeDragItemData}/> }
+          {(activeDragItemType === ACITVE_DRAG_ITEM_TYPE.CARD) && <Card card={activeDragItemData}/> }
+        </DragOverlay>
       </Box>
     </DndContext>
   )

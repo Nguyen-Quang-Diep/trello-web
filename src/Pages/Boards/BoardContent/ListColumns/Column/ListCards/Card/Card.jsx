@@ -7,17 +7,35 @@ import CardMedia from '@mui/material/CardMedia'
 import GroupIcon from '@mui/icons-material/Group'
 import CommentIcon from '@mui/icons-material/Comment'
 import AttachmentIcon from '@mui/icons-material/Attachment'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 function Card({ card }) {
+  const {
+    attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: card._id,
+    data: { ...card }
+  })
+
+  const dndKitCardStyles = {
+    // touchAction: 'none', // danh cho sensors dang pointer
+    //https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbEZ5TTVnSV9lVjFPdUxvVlpoMGQ5b2wwZDdmd3xBQ3Jtc0tsMmdUc2t5OEdTVTNLeXhPcWNzR2FITTFYa3Ytb1ZrUmZCbHMxclExUkViaHRwankyNDV4ZnhmaW93RUV6YVNqeFRnM3VaYXlGb2t0SDZVU1hfTHdNRG9EbGE4UG1vV21RX1FOd1RONl9KRG1zV0gwaw&q=https%3A%2F%2Fgithub.com%2Fclauderic%2Fdnd-kit%2Fissues%2F117&v=IttteelPx-k
+    transform: CSS.Translate.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : undefined
+  }
+
   const shouldShowCardActions = () => {
     return !!card.memberIds?.length || !!card.comments?.length || !!card.attachments?.length
   }
   return (
-    <MuiCard sx={{
-      cursor: 'pointer',
-      boxShadow: '0 1px 1px rgba(0, 0 , 0 ,0.2)',
-      overflow: 'unset'
-    }}>
+    <MuiCard
+      ref={setNodeRef} style={dndKitCardStyles} {...attributes} {...listeners}
+      sx={{
+        cursor: 'pointer',
+        boxShadow: '0 1px 1px rgba(0, 0 , 0 ,0.2)',
+        overflow: 'unset'
+      }}>
       {card?.cover &&
         <CardMedia
           sx={{ height: 140 }} image={card?.cover} />
